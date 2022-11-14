@@ -1,12 +1,12 @@
-# AWS Lambda Java 17 Custom Runtime
-![Maven Central](https://img.shields.io/maven-central/v/io.microlam/lambda-java17-layer)
+# AWS Lambda Java 18 Custom Runtime
+![Maven Central](https://img.shields.io/maven-central/v/io.microlam/lambda-java18-layer)
 
 Based on original work from Mark Sailes: [lambda-java17-layer](https://github.com/msailes/lambda-java17-layer)
 
 With a few differences:
 
-* Support for ``Java 17`` on architecture ``amd64`` and `arm64`
-* Based on [AWS Corretto 17](https://github.com/corretto/corretto-17/releases) build of OpenJDK
+* Support for ``Java 18`` on architecture ``amd64`` and `arm64`
+* Based on [AWS Corretto 18](https://github.com/corretto/corretto-18/releases) build of OpenJDK
 * The maven build create 2 artifacts for each architecture
 * The first part of the version is corresponding to the corretto version
 
@@ -31,9 +31,9 @@ The simplest way to bring the layer zip is to use the maven dependency plugin li
 		<artifactItems>
 			<artifactItem>
 				<groupId>io.microlam</groupId>
-				<artifactId>lambda-java17-layer</artifactId>
-				<version>17.0.2.8.1</version>
-				<classifier>${java17layer.arch}</classifier>
+				<artifactId>lambda-java18-layer</artifactId>
+				<version>18.0.2.9.1</version>
+				<classifier>${java18layer.arch}</classifier>
 				<type>zip</type>
 			</artifactItem>
 		</artifactItems>
@@ -44,7 +44,7 @@ The simplest way to bring the layer zip is to use the maven dependency plugin li
 </plugin>
 ```
 
-Where property ``java17layer.arch`` may be ``amd64`` or ``arm64``.
+Where property ``java18layer.arch`` may be ``amd64`` or ``arm64``.
 
 Then the simplest way to deploy it to AWS is to use the CDK:
 
@@ -55,18 +55,18 @@ Architecture architecture = Architecture.X86_64; // Architecture.ARM_64 or Archi
 //Do not modify this
 String arch = (architecture == Architecture.ARM_64)?"arm64":"amd64";
         
-LayerVersion java17layer = new LayerVersion(this, "Java17Layer-"+ arch, LayerVersionProps.builder()
-				        .layerVersionName("Java17Layer-" + arch)
-				        .description("Java 17 " + arch)
+LayerVersion java18layer = new LayerVersion(this, "Java18Layer-"+ arch, LayerVersionProps.builder()
+				        .layerVersionName("Java18Layer-" + arch)
+				        .description("Java 18 " + arch)
 				        .compatibleRuntimes(Arrays.asList(software.amazon.awscdk.services.lambda.Runtime.PROVIDED_AL2))
-				        .code(Code.fromAsset("target/lambda-java17-layer-17.0.2.8.1-"+ arch + ".zip"))
+				        .code(Code.fromAsset("target/lambda-java18-layer-18.0.2.9.1-"+ arch + ".zip"))
 				        .build());
 
 Function handlerBuilder = Function.Builder.create(this, "SimpleLambda")			    		  
            .functionName("SimpleLambda")
            .architecture(architecture)
            .runtime(software.amazon.awscdk.services.lambda.Runtime.PROVIDED_AL2)
-           .layers(Collections.singletonList(java17layer))
+           .layers(Collections.singletonList(java18layer))
            .handler("example.lambda.SimpleLambda")
            .memorySize(512)
            .timeout(Duration.seconds(20))
